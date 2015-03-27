@@ -8,7 +8,7 @@ Let's also say that both clusters are made up of cloud servers. You won't know w
 
 Your problem is this: How can each server get the addresses it needs to know, without having an explicit list defined anywhere?
 
-Enter Salt Mine. The official documentation for Salt Mine is quite good. [Go read it][mine]. I'll wait.
+Enter Salt Mine. Salt Mine is a mechanism for minions to get information about each other. Mine's official documentation is quite good. [Go read it][mine]. I'll wait.
 
 First you want minions' network interfaces exposed to the mine. You do this in the minion configuration file. You want something like this, alongside whatever your current configuration is: [^1]
 
