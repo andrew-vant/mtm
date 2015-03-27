@@ -69,6 +69,7 @@ some_application_conf:
 The original messy lines have collapsed to around a third of their original size. It is blindly obvious what they are doing (as long as you remember what `dget` refers to), and they no longer distract the eye from the surrounding lines. Multiply this by every pillarized option in a long .sls file, and the file as a whole becomes much, much easier to read and maintain.
 
 [^1]: At time of writing. I imagine someone will update it eventually. Maybe even me.
+
 [^2]: This trick works just as well for pillar.get, or any of the other salt[] functions.
 
 [dget]: http://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.defaults.html#salt.modules.defaults.get
