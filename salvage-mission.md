@@ -1,10 +1,10 @@
 % Salvage Mission
 
-My partner's sister comes to me a few days ago with an external hard drive that has a broken connector. Critical files on it, recovery required. Okay, fair enough; I used to do this all the time in my days as a PC tech. I still have a wonderful [usb to hard drive adapter][adapter] that I used to use to salvage files in cases just like this. Should be trivial; it's just physical damage to the drive shell's connector, nothing wrong with the drive itself. I hook it up to the nearest machine. 
+My partner's sister comes to me a few days ago with an Toshiba external hard drive that has a broken connector. Critical files on it, recovery required. Okay, fair enough; I used to do this all the time in my days as a PC tech. I still have a wonderful [usb to hard drive adapter][adapter] that I used to use to salvage files in cases just like this. Should be trivial; it's just physical damage to the drive shell's connector, nothing wrong with the drive itself. I hook it up to the nearest machine. 
 
 Explorer asks if I want to format it. What? No. No, I don't.
 
-I look at it in Disk Manager. I see a single big partition marked "Raw." This was around the time I figuree out I'm going to have a bad day. This is the story of that bad day.
+I look at it in Disk Manager. I see a single big partition marked "Raw." This was around the time I figure out I'm going to have a bad day. This is the story of that bad day.
 
 I disconnect the disk and attach it to my Linux laptop to have a closer look. Trying to mount it fails utterly: 
 
@@ -34,7 +34,7 @@ Volume is corrupt. You should run chkdsk.
 No change made
 ```
 
-Note the -n option, which asks ntfsfix to tell you what it will do without actually doing it. I am kind of nervous at this point, because I have no backup of this drive and I don't want to break things more than they're already broken. I consider pointing testdisk at it (which I haven't used before) but can't figure out how to get it to show me a dry run. I could *probably* hand-hack a partition table by hand if I accidentally nuked it, but 1. I'd rather not, and 2. I'm reasonably sure I *can't* hand-hack the NTFS filesystem itself, and I've no idea if testdisk touches that.
+Note the -n option, which asks ntfsfix to tell you what it will do without actually doing it. I am kind of nervous at this point, because I have no backup of this drive and I don't want to break things more than they're already broken. I consider pointing testdisk at it (which I haven't used before) but can't figure out how to get it to show me a dry run. I could *probably* hand-hack a partition table if I accidentally nuked it, but 1. I'd rather not, and 2. I'm reasonably sure I *can't* hand-hack the NTFS filesystem itself, and I've no idea if testdisk touches that.
 
 I can't make a backup of the whole disk, it's too big, but before I start getting invasive let's at least back up the beginning of the drive, so I have a copy of the partition table and hopefully whatever front-of-filesystem information NTFS uses:
 
@@ -90,7 +90,7 @@ On the other hand, I can't think of any causal reason a busted external-shell co
 
 Whatever, presumably it will make sense later. I know I can nuke the partition table and make a new one pointing wherever I want with parted. But where is it *supposed* to point? "Wherever the missing NTFS signature is actually located", presumably, but I still don't know what that is, and the Oracle remains silent on the matter.
 
-I think of something I should have thought of hours earlier. I ask Google for a Windows utility capable of pulling a hex dump of disks and partitions; it points me to Hex Workshop. I fire that up on one of my own PCs, and open the system drive, hoping for something that looks like a signature. It gives me....
+I think of something I should have thought of hours earlier. I ask Google for a Windows utility capable of pulling a hex dump of disks and partitions; it points me to Hex Workshop. I fire that up on one of my own PCs, and open the system drive, hoping for something that looks like a signature. It gives me...
 
 ```
 00000000  EB 52 90 4E 54 46 53 20 20 20 20 00 02 08 00 00  .R.NTFS    .....
@@ -158,9 +158,9 @@ This quote is also from the answer above, and it makes me think.
 
 Do we really? Just how valid does the partition table need to be, to not make things explode?
 
-Suppose you created two partitions, overlapping, one valid for the 4k addressing scheme and one for the 512b scheme. I don't think partition-management tools will let you do this, but suppose you hand-hacked it. Could you then swap the drive in and out of an enclosure performing this sort of translation, and expect one volume to work each way, both accessing the same data?
+Suppose you created two partitions, overlapping, one valid for 4k sector sizes and one for 512b, both addressing the same space. I don't think partition-management tools will let you do this, but suppose you hand-hacked it. Could you then swap the drive in and out of an enclosure performing this sort of translation, and expect one volume to work each way, both accessing the same data?
 
-I don't know, and since the original translating enclosure is busted I don't have a way to try it, and I can't think of any reason you would *want* to do it, but it's a fascinating thought.
+I don't know, and since the original translating enclosure is busted I don't have a way to try it, and I can't think of any reason you would *want* to do it, but it would be awesome if it worked.
 
 [adapter]: http://www.newegg.com/Product/Product.aspx?Item=N82E16812196455
 [answer]: http://askubuntu.com/a/337993
