@@ -1,6 +1,6 @@
 % Salvage Mission
 
-My partner's sister comes to me a few days ago with an Toshiba external
+My partner's sister comes to me a few days ago with a Toshiba external
 hard drive that has a broken connector. Critical files on it, recovery
 required. Okay, fair enough; I used to do this all the time in my days as a
 PC tech. I still have a wonderful [usb to hard drive adapter][adapter] that
