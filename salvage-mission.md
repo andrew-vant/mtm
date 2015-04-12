@@ -105,8 +105,7 @@ I probably should have expected. I need to search for the whole line. I only
 search the first 10MB here because I don't want to be reading the whole disk:
 
 ```
-$ hd /dev/sdc -n 10000000 | grep '52 43 52 44 28 00 09 00  ea df 0d 43 00
-00 00 00'
+$ hd /dev/sdc -n 10000000 | grep '52 43 52 44 28 00 09 00  ea df 0d 43 00 00 00 00'
 00800000  52 43 52 44 28 00 09 00  ea df 0d 43 00 00 00 00  |RCRD(......C....|
 ```
 
