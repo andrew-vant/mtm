@@ -17,7 +17,7 @@ story of that bad day.
 I disconnect the disk and attach it to my Linux laptop to have a closer
 look. Trying to mount it fails utterly:
 
-```
+```console
 $ mkdir /mnt/test
 $ mount -t ntfs /dev/sdc1 /mnt/test
 NTFS signature is missing.
@@ -31,7 +31,7 @@ I have no idea what an NTFS signature is, but I know that this is bad. I try
 a few other methods of mounting it without success. I point ntfsfix at it,
 also without success:
 
-```
+```console
 $ ntfsfix -n /dev/sdc1
 Mounting volume... NTFS signature is missing.
 FAILED
@@ -59,7 +59,7 @@ getting invasive let's at least back up the beginning of the drive, so I
 have a copy of the partition table and hopefully whatever front-of-filesystem
 information NTFS uses:
 
-```
+```console
 $ dd if=/dev/sdc of=/root/sdc.bak bs=1k count=10000
 ```
 
@@ -73,7 +73,7 @@ Still, it's something. Let's see if we can work out what's up with that
 signature. I'm guessing the ntfs mounter expects some magic number at the
 beginning of the partition's filesystem to indicate that it actually is NTFS.
 
-```
+```console
 $ hd /dev/sdc1 | head
 00000000  52 43 52 44 28 00 09 00  ea df 0d 43 00 00 00 00  |RCRD(......C....|
 00000010  01 00 00 00 01 00 01 00  50 0f 00 00 00 00 00 00  |........P.......|
@@ -92,7 +92,7 @@ in the middle of it. Where? Let's see if I can find out where on the disk
 it's actually looking for sdc1. I don't really trust the partition table,
 so I'm going to look directly at the disk.
 
-```
+```console
 $ hd /dev/sdc | grep RCRD | head
 00113000  52 43 52 44 28 00 09 00  00 60 00 00 00 00 00 00  |RCRD(....`......|
 00114000  52 43 52 44 28 00 09 00  00 70 00 00 00 00 00 00  |RCRD(....p......|
@@ -104,7 +104,7 @@ Oops. Apparently I'm really in the middle of a series of RCRD entries, which
 I probably should have expected. I need to search for the whole line. I only
 search the first 10MB here because I don't want to be reading the whole disk:
 
-```
+```console
 $ hd /dev/sdc -n 10000000 | grep '52 43 52 44 28 00 09 00  ea df 0d 43 00 00 00 00'
 00800000  52 43 52 44 28 00 09 00  ea df 0d 43 00 00 00 00  |RCRD(......C....|
 ```
@@ -114,7 +114,7 @@ table to see if something's really screwey. parted refuses to look at the
 disk, though. Apparently my partition extends off the end of the disk,
 and parted's map claims that here there be monsters:
 
-```
+```console
 $ parted /dev/sdc
 GNU Parted 2.3
 Using /dev/sdc
@@ -147,7 +147,7 @@ a Windows utility capable of pulling a hex dump of disks and partitions; it
 points me to Hex Workshop. I fire that up on one of my own PCs, and open the
 system drive, hoping for something that looks like a signature. It gives me...
 
-```
+```console
 00000000  EB 52 90 4E 54 46 53 20 20 20 20 00 02 08 00 00  .R.NTFS    .....
 00000010  00 00 00 00 00 F8 00 00 3F 00 FF 00 3F 00 00 00  ........?...?...
 00000020  00 00 00 00 80 00 80 00 73 3C 0D 03 00 00 00 00  ........s<......
@@ -158,7 +158,7 @@ ASCII. ARRRRRRGGGGGGGHHHHHHH.
 
 Back to the problem drive:
 
-```
+```console
 $ hd sdc.bak -n 10000000| grep NTFS | head
 00100000  eb 52 90 4e 54 46 53 20  20 20 20 00 02 08 00 00  |.R.NTFS    .....|
 ```
@@ -195,7 +195,7 @@ I delete the partition in cfdisk, then re-create it using parted, because
 parted will let you dictate where it starts. On a 4k disk, 0x100000 is the
 start of sector 256.
 
-```
+```console
 $ parted /dev/sdc
 GNU Parted 2.3
 Using /dev/sdc
