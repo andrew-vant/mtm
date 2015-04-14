@@ -18,7 +18,7 @@ mine_functions:
   # and anything else you want available....
 ```
 
-After adding this, refresh the pillar (or just run a highstate). That makes the network interface information for your minion available in the salt mine. For purposes of this example we are looking for the first ip address on the interface 'eth0'. We're also assuming that the database servers are named to match the glob \*.database.\*. For example, node01.database.example.com:
+After adding this (and ensuring it is applied in pillar/top.sls), refresh the pillar (or just run a highstate). That makes the network interface information for your minion available in the salt mine. For purposes of this example we are looking for the first ip address on the interface 'eth0'. We're also assuming that the database servers are named to match the glob \*.database.\*. For example, node01.database.example.com:
 
 ```
 # salt/someapp/config.sls
