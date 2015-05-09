@@ -1,26 +1,24 @@
 % Peer Discovery Using Salt Mine
 
-*(prerequisites: basic knowledge of salt and salt-mine)*
-
-You have a salt environment. Let's say the environment consists of a set of webheads serving applications, which are backed by a cluster of database servers. The webheads need to know the IP addresses of the database servers in order to query them. The database servers need to know the IP addresses of the webheads, so that they can allow them to connect and block everything else.
+You have an environment managed by Salt. Let's say the environment consists of a set of webheads serving applications, which are backed by a cluster of database servers. The webheads need to know the IP addresses of the database servers in order to query them. The database servers need to know the IP addresses of the webheads, so that they can allow them to connect and block everything else.
 
 Let's also say that both clusters are made up of cloud servers. You won't know what IP addresses they're going to get until after they have been built. So, you can't specify an explicit list of your servers' addresses in a pillar. Alternately, you just despise explicit lists (greetings, comrade!) and want a better way.
 
 Your problem is this: How can each server get the addresses it needs to know, without having an explicit list defined anywhere?
 
-Enter Salt Mine. Salt Mine is a mechanism for minions to get information about each other. Mine's official documentation is quite good. [Go read it][mine]. I'll wait.
+Enter Salt Mine. Salt Mine is a mechanism for minions to get information about each other. Mine's official documentation is quite good. [Go read it][mine].
 
-First you want minions' network interfaces exposed to the mine. You do this in the minion configuration file. You want something like this, alongside whatever your current configuration is: [^1]
+First you want minions' network interfaces exposed to the mine. You can do this from either the minion configuration file or the pillar, but it's preferable to do it from the pillar, because applying it only requires a pillar refresh rather than a minion service restart. 
 
 ```
-# /etc/salt/minion.d/mine.conf
-mine_interval: 60
+# pillar/salt/mine.sls
 mine_functions:
+  network.interfaces: []
   test.ping: []
-  network.interfaces: [] # <---- this is the important bit.
+  # and anything else you want available....
 ```
 
-That makes the network interface information for your minion available in the salt mine. For purposes of this example we are looking for the first ip address on the interface 'eth0'. We're also assuming that the database servers are named to match the glob \*.database.\*. For example, node01.database.example.com:
+After adding this (and ensuring it is applied in pillar/top.sls), refresh the pillar (or just run a highstate). That makes the network interface information for your minion available in the salt mine. For purposes of this example we are looking for the first ip address on the interface 'eth0'. We're also assuming that the database servers are named to match the glob \*.database.\*. For example, node01.database.example.com:
 
 ```
 # salt/someapp/config.sls
@@ -31,7 +29,8 @@ That makes the network interface information for your minion available in the sa
 {%- endfor %}
 
 # Now database_ips is an array containing the ip addresses of all
-# minions matching the *.database.* glob, and we can use it in the state.
+# minions matching the *.database.example.com glob, and we can use
+# it in the state.
 
 someapp-conf:
   file.managed:
@@ -44,7 +43,7 @@ someapp-conf:
 
 Your config file template now receives an array, containing the ip addresses of the database servers in a context variable named 'dbservers'. The same technique can be used on the database side to get the addresses of the webheads; or, for that matter, to allow the database servers to discover each other. Of course, the query could be performed inside the template instead, if desired.
 
-There is still a flaw in the above code. It assumes a particular naming scheme for the database servers. Deployment-specific information like that shouldn't go in a salt formula. It should be restricted to the pillar. 
+There is still a flaw in the above code. It assumes a particular naming scheme for the database servers. Deployment-specific information like that shouldn't go in a salt formula. It should be in the pillar. 
 
 Fortunately, we can pull the mine query itself from the pillar!
 
@@ -75,11 +74,6 @@ salt '*' mine.update
 salt '*' state.highstate
 ```
 
-It gets more complicated if you have interdependencies that have to be set up in a particular order[^2], but for a lot of use cases it really is just that simple.
-
-[^1]: I strongly recommend [saltstack/salt-formula][sform] for manging this.
-
-[^2]: Use orchestration for that. I might write more about that another time.
+It gets more complicated if you have interdependencies that have to be set up in a particular order, but for a lot of use cases it really is just that simple.
 
 [mine]: http://docs.saltstack.com/en/latest/topics/mine/
-[sform]: https://github.com/saltstack-formulas/salt-formula
