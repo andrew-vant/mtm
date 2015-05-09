@@ -237,5 +237,12 @@ I don't know, and since the original translating enclosure is busted I
 don't have a way to try it, and I can't think of any reason you would *want*
 to do it, but it would be awesome if it worked.
 
+**Afterword 2**
+
+When the replacement enclosure (different make and model) arrived, it
+turned out to do the same demented translation as the old one. Fortunately,
+it wasn't hard to revert the changes I'd made. But seriously, how common
+is this crap? Who should I hurt for it?
+
 [adapter]: http://www.newegg.com/Product/Product.aspx?Item=N82E16812196455
 [answer]: http://askubuntu.com/a/337993
