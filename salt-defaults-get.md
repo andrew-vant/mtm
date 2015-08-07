@@ -6,7 +6,7 @@
 
 Let's suppose you have a salt state that configures `some_application`. And let's suppose you want the location and source for the configuration file template to be settable in pillar. If you do it the usual way, the relevant part of your salt state and pillar might look something like this:
 
-```
+```salt
 # salt/someapp/configure.sls
 some_application_conf:
   file.managed:
@@ -30,7 +30,7 @@ If you have a ten-line state, neither of these is a problem. If you have a two-h
 
 Unfortunately the example from the [official documentation][dget] used json. It's contrary to the yaml used just about everywhere else in the documentation. That makes it harder to pick out exactly what the relationship is between the defaults file and the pillar. Presenting it as defaults.yaml makes things much easier to see:
 
-```
+```salt
 # salt/someapp/configure.sls
 some_application_conf:
   file.managed:
@@ -53,7 +53,7 @@ someapp:
 
 But wait! We can make things even more readable, by aliasing defaults.get[^2]:
 
-```
+```salt
 # salt/someapp/configure.sls
 
 {%- set dget = salt['defaults.get'] %}
@@ -70,6 +70,6 @@ The original messy lines have collapsed to around a third of their original size
 
 [^1]: At time of writing. I imagine someone will update it eventually. Maybe even me.
 
-[^2]: This trick works just as well for pillar.get, or any of the other salt[] functions.
+[^2]: This trick works just as well for pillar.get, or any of the other salt['something'] functions.
 
 [dget]: http://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.defaults.html#salt.modules.defaults.get
