@@ -93,14 +93,14 @@ conf:
 {%- set dget = salt['defaults.get'] %}
 opt1: something
 opt2: something_else
-opt3: {{ dget("conf:opt3") }}  # Oops: returns empty string instead of 3
+opt3: {{ dget("conf:opt3") }}  # OOPS: returns empty string instead of 3
 ```
 
 I filed a [bug report](https://github.com/saltstack/salt/issues/19856) for this, but right now it's still open. It seems to occur because for some reason, during highstate, the template doesn't know what sls is applying it; and so doesn't know where to look for defaults.yaml.
 
 You can work around this by explicitly specifying the sls in the state:
 
-```
+```salt
 # salt/someapp/configure.sls
 {%- set dget = salt['defaults.get'] %}
 some_application_conf:
